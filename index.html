@@ -5339,14 +5339,20 @@
       }
       .hero-title img {
         display: block;
-        width: clamp(230px, 24vw, 400px);
+        width: clamp(320px, 32vw, 540px);
         max-width: 100%;
         height: auto;
-        margin-top: -1.15em;
       }
       @media (max-width: 767px) {
         .hero-title { bottom: 12vh; }
         .bottom-ui-container { right: 12px !important; bottom: 4vh !important; }
+      }
+
+      /* bolder nav text (maps to the PictureHouse bold face) */
+      #brand-nav .bn-link,
+      #brand-nav .bn-label {
+        font-family: "DM Sans", sans-serif;
+        font-weight: 700;
       }
 
       /* mobile header: burger + icon-only buttons */
@@ -6380,8 +6386,7 @@
               </div>
 
               <div class="hero-title" id="hero-title">
-                <h1>The New<br />Era of Perfumes</h1>
-                <img src="images/title.png" alt="Is Now On!!" decoding="async" />
+                <img src="images/title.png" alt="The New Era of Perfumes — Is Now On!!" decoding="async" />
               </div>
               <div class="bottom-ui-container">
                 <div class="drag-indicator"></div>
@@ -12563,7 +12568,7 @@
           this.clock = new THREE.Clock();
 
           this.scene = new THREE.Scene();
-          this.scene.background = new THREE.Color(this.config.bgColor);
+          this.scene.background = null; // transparent — page bg shows through
 
           this.camera = new THREE.PerspectiveCamera(75, 1, 0.1, 100);
           this.camera.position.set(0, 0, 16);
@@ -12572,7 +12577,7 @@
             antialias: true,
             alpha: true,
           });
-          this.renderer.setClearColor(new THREE.Color(this.config.bgColor), 1);
+          this.renderer.setClearColor(0x000000, 0); // transparent clear
           this.renderer.domElement.style.width = "100%";
           this.renderer.domElement.style.height = "100%";
           this.renderer.domElement.style.display = "block";
@@ -13404,5 +13409,93 @@
         });
       })();
     </script>
-  </body>
+    <script>
+    // light purple smoke trail following the cursor (brand #694A96)
+    (function () {
+      if (
+        window.matchMedia &&
+        (window.matchMedia("(hover: none)").matches ||
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      )
+        return;
+      var cv = document.createElement("canvas");
+      cv.id = "nd-smoke";
+      cv.style.cssText =
+        "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:12000;mix-blend-mode:screen;";
+      document.body.appendChild(cv);
+      var ctx = cv.getContext("2d");
+      var W, H;
+      var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+      function size() {
+        W = cv.width = innerWidth * DPR;
+        H = cv.height = innerHeight * DPR;
+      }
+      size();
+      addEventListener("resize", size);
+      var parts = [],
+        lx = -1,
+        ly = -1,
+        running = false;
+      addEventListener(
+        "pointermove",
+        function (e) {
+          var x = e.clientX * DPR,
+            y = e.clientY * DPR;
+          if (lx < 0) {
+            lx = x;
+            ly = y;
+          }
+          var dx = x - lx,
+            dy = y - ly;
+          if (dx * dx + dy * dy < 100 * DPR * DPR) return;
+          lx = x;
+          ly = y;
+          if (parts.length > 90) parts.splice(0, parts.length - 90);
+          parts.push({
+            x: x,
+            y: y,
+            vx: dx * 0.02 + (Math.random() - 0.5) * 0.4,
+            vy: dy * 0.02 - 0.25 - Math.random() * 0.3,
+            r: (16 + Math.random() * 14) * DPR,
+            life: 0,
+            max: 70 + Math.random() * 40,
+          });
+          if (!running) {
+            running = true;
+            requestAnimationFrame(tick);
+          }
+        },
+        { passive: true },
+      );
+      function tick() {
+        ctx.clearRect(0, 0, W, H);
+        for (var i = parts.length - 1; i >= 0; i--) {
+          var p = parts[i];
+          p.life++;
+          if (p.life >= p.max) {
+            parts.splice(i, 1);
+            continue;
+          }
+          p.x += p.vx * DPR;
+          p.y += p.vy * DPR;
+          p.r *= 1.012;
+          var t = p.life / p.max;
+          var a = 0.09 * (1 - t) * Math.min(1, t * 6); // too-light on purpose
+          var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+          g.addColorStop(0, "rgba(105, 74, 150," + a + ")");
+          g.addColorStop(1, "rgba(105, 74, 150, 0)");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+          ctx.fill();
+        }
+        if (parts.length) requestAnimationFrame(tick);
+        else {
+          running = false;
+          ctx.clearRect(0, 0, W, H);
+        }
+      }
+    })();
+  </script>
+</body>
 </html>
