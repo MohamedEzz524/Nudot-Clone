@@ -5309,6 +5309,46 @@
         pointer-events: none;
       }
 
+      /* hero: thumbnails bottom-right, smaller */
+      .bottom-ui-container {
+        left: auto !important;
+        right: clamp(20px, 4vw, 56px) !important;
+        bottom: 6vh !important;
+        margin: 0 !important;
+      }
+      .slide-thumb { height: 42px !important; }
+      .drag-indicator { height: 34px !important; margin-bottom: 5px !important; }
+
+      /* hero: headline bottom-left with the script overlay */
+      .hero-title {
+        position: absolute;
+        left: clamp(20px, 4vw, 56px);
+        bottom: 6vh;
+        z-index: 610;
+        color: #fff;
+        pointer-events: none;
+      }
+      .hero-title h1 {
+        margin: 0;
+        font-family: "Zalando Sans SemiExpanded", "DM Sans", sans-serif;
+        font-weight: 700;
+        font-size: clamp(26px, 3.2vw, 50px);
+        line-height: 1.05;
+        letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+      .hero-title img {
+        display: block;
+        width: clamp(230px, 24vw, 400px);
+        max-width: 100%;
+        height: auto;
+        margin-top: -1.15em;
+      }
+      @media (max-width: 767px) {
+        .hero-title { bottom: 12vh; }
+        .bottom-ui-container { right: 12px !important; bottom: 4vh !important; }
+      }
+
       /* mobile header: burger + icon-only buttons */
       #brand-nav .bn-burger {
         display: none;
@@ -6339,6 +6379,10 @@
                 </div>
               </div>
 
+              <div class="hero-title" id="hero-title">
+                <h1>The New<br />Era of Perfumes</h1>
+                <img src="images/title.png" alt="Is Now On!!" decoding="async" />
+              </div>
               <div class="bottom-ui-container">
                 <div class="drag-indicator"></div>
                 <div class="thumbs-container">
@@ -8608,7 +8652,7 @@
             totalSlidesEl.textContent = String(slideCount).padStart(2, "0");
           document.documentElement.style.setProperty(
             "--thumb-width",
-            `${Math.min(144, 720 / slideCount)}px`,
+            `${Math.min(96, 720 / slideCount)}px`,
           );
 
           document
