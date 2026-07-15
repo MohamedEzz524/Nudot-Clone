@@ -13543,7 +13543,8 @@
       })();
     </script>
     <script>
-    // light purple smoke trail following the cursor (brand #694A96)
+    // fluid-style smoke cursor — brand purple/white, medium-low strength.
+    // Own implementation: persistent fading buffer (dye smear) + swirl field.
     (function () {
       if (
         window.matchMedia &&
@@ -13557,42 +13558,68 @@
         "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:12000;mix-blend-mode:screen;";
       document.body.appendChild(cv);
       var ctx = cv.getContext("2d");
+      var DPR = Math.min(window.devicePixelRatio || 1, 1.25);
       var W, H;
-      var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
       function size() {
         W = cv.width = innerWidth * DPR;
         H = cv.height = innerHeight * DPR;
       }
       size();
       addEventListener("resize", size);
+
       var parts = [],
         lx = -1,
         ly = -1,
-        running = false;
+        lt = 0,
+        running = false,
+        idleFrames = 0;
+
+      // cheap swirl field for fluid-like advection
+      function curl(x, y, t) {
+        return {
+          x:
+            Math.sin(y * 0.0016 + t * 0.0005) +
+            Math.cos(x * 0.0011 - t * 0.0004),
+          y:
+            Math.cos(x * 0.0014 + t * 0.0006) -
+            Math.sin(y * 0.0012 + t * 0.0003),
+        };
+      }
+
       addEventListener(
         "pointermove",
         function (e) {
           var x = e.clientX * DPR,
-            y = e.clientY * DPR;
+            y = e.clientY * DPR,
+            now = performance.now();
           if (lx < 0) {
             lx = x;
             ly = y;
+            lt = now;
           }
           var dx = x - lx,
-            dy = y - ly;
-          if (dx * dx + dy * dy < 100 * DPR * DPR) return;
+            dy = y - ly,
+            dt = Math.max(now - lt, 1);
+          var speed = Math.min(Math.hypot(dx, dy) / dt, 3);
+          if (dx * dx + dy * dy < 36 * DPR * DPR) return;
+          lt = now;
+          var steps = Math.min(3, 1 + ((speed * 2) | 0));
+          for (var i = 0; i < steps; i++) {
+            var f = (i + 1) / steps;
+            parts.push({
+              x: lx + dx * f,
+              y: ly + dy * f,
+              vx: dx * 0.028 + (Math.random() - 0.5) * 0.5,
+              vy: dy * 0.028 - 0.3 - Math.random() * 0.35,
+              r: (14 + Math.random() * 22 + speed * 14) * DPR,
+              life: 0,
+              max: 55 + Math.random() * 45,
+              white: Math.random() < 0.3,
+            });
+          }
           lx = x;
           ly = y;
-          if (parts.length > 90) parts.splice(0, parts.length - 90);
-          parts.push({
-            x: x,
-            y: y,
-            vx: dx * 0.02 + (Math.random() - 0.5) * 0.4,
-            vy: dy * 0.02 - 0.25 - Math.random() * 0.3,
-            r: (16 + Math.random() * 14) * DPR,
-            life: 0,
-            max: 70 + Math.random() * 40,
-          });
+          if (parts.length > 140) parts.splice(0, parts.length - 140);
           if (!running) {
             running = true;
             requestAnimationFrame(tick);
@@ -13600,8 +13627,13 @@
         },
         { passive: true },
       );
-      function tick() {
-        ctx.clearRect(0, 0, W, H);
+
+      function tick(t) {
+        // fade the previous frame instead of clearing — dye-smear trail
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.fillStyle = "rgba(0,0,0,0.14)";
+        ctx.fillRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "lighter";
         for (var i = parts.length - 1; i >= 0; i--) {
           var p = parts[i];
           p.life++;
@@ -13609,22 +13641,38 @@
             parts.splice(i, 1);
             continue;
           }
+          var c = curl(p.x, p.y, t);
+          p.vx += c.x * 0.045;
+          p.vy += c.y * 0.045 - 0.012;
+          p.vx *= 0.985;
+          p.vy *= 0.985;
           p.x += p.vx * DPR;
           p.y += p.vy * DPR;
-          p.r *= 1.012;
-          var t = p.life / p.max;
-          var a = 0.09 * (1 - t) * Math.min(1, t * 6); // too-light on purpose
-          var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
-          g.addColorStop(0, "rgba(105, 74, 150," + a + ")");
-          g.addColorStop(1, "rgba(105, 74, 150, 0)");
+          p.r *= 1.006;
+          var k = p.life / p.max;
+          var a = 0.028 * (1 - k) * Math.min(1, k * 7);
+          var g = ctx.createRadialGradient(p.x, p.y, p.r * 0.15, p.x, p.y, p.r);
+          if (p.white) {
+            g.addColorStop(0, "rgba(235,230,245," + a * 0.9 + ")");
+            g.addColorStop(1, "rgba(235,230,245,0)");
+          } else {
+            g.addColorStop(0, "rgba(139,104,190," + a + ")");
+            g.addColorStop(0.55, "rgba(105,74,150," + a * 0.75 + ")");
+            g.addColorStop(1, "rgba(105,74,150,0)");
+          }
           ctx.fillStyle = g;
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.r, 0, 6.2832);
           ctx.fill();
         }
-        if (parts.length) requestAnimationFrame(tick);
-        else {
+        if (parts.length) {
+          idleFrames = 0;
+          requestAnimationFrame(tick);
+        } else if (idleFrames++ < 60) {
+          requestAnimationFrame(tick); // keep fading the residue
+        } else {
           running = false;
+          ctx.globalCompositeOperation = "source-over";
           ctx.clearRect(0, 0, W, H);
         }
       }
