@@ -13641,7 +13641,7 @@
             dy = y - ly,
             dt = Math.max(now - lt, 1);
           var speed = Math.min(Math.hypot(dx, dy) / dt, 3);
-          if (dx * dx + dy * dy < 36 * DPR * DPR) return;
+          if (dx * dx + dy * dy < 16 * DPR * DPR) return;
           lt = now;
           var steps = Math.min(3, 1 + ((speed * 2) | 0));
           for (var i = 0; i < steps; i++) {
@@ -13651,7 +13651,8 @@
               y: ly + dy * f,
               vx: dx * 0.028 + (Math.random() - 0.5) * 0.5,
               vy: dy * 0.028 - 0.3 - Math.random() * 0.35,
-              r: (14 + Math.random() * 22 + speed * 14) * DPR,
+              r: (9 + Math.random() * 10) * DPR,
+              sp: speed,
               life: 0,
               max: 55 + Math.random() * 45,
               white: Math.random() < 0.3,
@@ -13671,7 +13672,7 @@
       function tick(t) {
         // fade the previous frame instead of clearing — dye-smear trail
         ctx.globalCompositeOperation = "destination-out";
-        ctx.fillStyle = "rgba(0,0,0,0.14)";
+        ctx.fillStyle = "rgba(0,0,0,0.1)";
         ctx.fillRect(0, 0, W, H);
         ctx.globalCompositeOperation = "lighter";
         for (var i = parts.length - 1; i >= 0; i--) {
@@ -13682,16 +13683,22 @@
             continue;
           }
           var c = curl(p.x, p.y, t);
-          p.vx += c.x * 0.045;
-          p.vy += c.y * 0.045 - 0.012;
-          p.vx *= 0.985;
-          p.vy *= 0.985;
+          p.vx += c.x * 0.075;
+          p.vy += c.y * 0.075 - 0.004;
+          p.vx *= 0.97;
+          p.vy *= 0.97;
           p.x += p.vx * DPR;
           p.y += p.vy * DPR;
           p.r *= 1.006;
           var k = p.life / p.max;
-          var a = 0.028 * (1 - k) * Math.min(1, k * 7);
-          var g = ctx.createRadialGradient(p.x, p.y, p.r * 0.15, p.x, p.y, p.r);
+          var a = 0.016 * (1 - k) * Math.min(1, k * 7);
+          var ang = Math.atan2(p.vy, p.vx);
+          var stretch = 1.6 + Math.min((p.sp || 0) * 1.2, 1.6);
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(ang);
+          ctx.scale(stretch, 1);
+          var g = ctx.createRadialGradient(0, 0, p.r * 0.12, 0, 0, p.r);
           if (p.white) {
             g.addColorStop(0, "rgba(235,230,245," + a * 0.9 + ")");
             g.addColorStop(1, "rgba(235,230,245,0)");
@@ -13702,8 +13709,9 @@
           }
           ctx.fillStyle = g;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+          ctx.arc(0, 0, p.r, 0, 6.2832);
           ctx.fill();
+          ctx.restore();
         }
         if (parts.length) {
           idleFrames = 0;
