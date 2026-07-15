@@ -5180,13 +5180,13 @@
       }
       @font-face {
         font-family: "forma-djr-mono";
-        src: url("fonts/mb-ph-two-light.ttf") format("truetype");
+        src: url("fonts/mb-ph-one-regular.ttf") format("truetype");
         font-weight: 100 900;
         font-display: swap;
       }
       @font-face {
         font-family: "lores-12";
-        src: url("fonts/mb-ph-two-light.ttf") format("truetype");
+        src: url("fonts/mb-ph-one-regular.ttf") format("truetype");
         font-weight: 100 900;
         font-display: swap;
       }
@@ -5371,17 +5371,21 @@
       .pf-info .pf-title {
         position: static;
         transform: none;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 700;
       }
       .pf-desc {
         margin: 0;
-        font-family: "forma-djr-mono", ui-monospace, monospace;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 400;
         font-size: 13px;
         letter-spacing: 0.08em;
         color: rgba(255, 255, 255, 0.66);
         max-width: 460px;
       }
       .pf-price {
-        font-family: "forma-djr-mono", ui-monospace, monospace;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 700;
         font-size: 12px;
         letter-spacing: 0.22em;
         text-transform: uppercase;
@@ -13605,17 +13609,18 @@
       try {
         sim = new WebGLFluidEnhanced(host);
         sim.setConfig({
+          // SmokeyCursor "Subtle Ambient Effect" preset values, brand palette
           colorPalette: ["#694a96", "#8b68be", "#cfc6e2"],
           hover: true,
           bloom: false,
           sunrays: false,
           transparent: true,
           brightness: 0.35,
-          densityDissipation: 3.5,
-          velocityDissipation: 2,
-          splatRadius: 0.12,
-          splatForce: 3500,
-          curl: 20,
+          splatRadius: 0.1,
+          splatForce: 3000,
+          densityDissipation: 8,
+          velocityDissipation: 5,
+          colorUpdateSpeed: 5,
           pressureIterations: 10,
         });
         sim.start();
