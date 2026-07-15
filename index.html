@@ -6555,6 +6555,9 @@
                 >
                   <source data-src="images/wavebg.mp4" type="video/mp4" />
                 </video>
+
+                <div class="glow-bottom-left" id="ui-glow1"></div>
+                <div class="glow-center-left" id="ui-glow2"></div>
                 <div class="scroll-indicator" id="ui-scroll">
                   <div class="si-block">
                     <div class="si-letter">
@@ -13582,9 +13585,10 @@
         });
       })();
     </script>
-    <script>
-    // fluid-style smoke cursor — brand purple/white, medium-low strength.
-    // Own implementation: persistent fading buffer (dye smear) + swirl field.
+    <script type="module">
+    // real fluid-simulation cursor (webgl-fluid-enhanced, MIT — vendored) in
+    // brand purple/white at medium-low strength
+    import WebGLFluidEnhanced from "./js/fluid.js";
     (function () {
       if (
         window.matchMedia &&
@@ -13592,138 +13596,49 @@
           window.matchMedia("(prefers-reduced-motion: reduce)").matches)
       )
         return;
-      var cv = document.createElement("canvas");
-      cv.id = "nd-smoke";
-      cv.style.cssText =
-        "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:12000;mix-blend-mode:screen;";
-      document.body.appendChild(cv);
-      var ctx = cv.getContext("2d");
-      var DPR = Math.min(window.devicePixelRatio || 1, 1.25);
-      var W, H;
-      function size() {
-        W = cv.width = innerWidth * DPR;
-        H = cv.height = innerHeight * DPR;
+      var host = document.createElement("div");
+      host.id = "nd-fluid";
+      host.style.cssText =
+        "position:fixed;inset:0;pointer-events:none;z-index:12000;mix-blend-mode:screen;";
+      document.body.appendChild(host);
+      var sim;
+      try {
+        sim = new WebGLFluidEnhanced(host);
+        sim.setConfig({
+          colorPalette: ["#694a96", "#8b68be", "#cfc6e2"],
+          hover: true,
+          bloom: false,
+          sunrays: false,
+          transparent: true,
+          brightness: 0.35,
+          densityDissipation: 3.5,
+          velocityDissipation: 2,
+          splatRadius: 0.12,
+          splatForce: 3500,
+          curl: 20,
+          pressureIterations: 10,
+        });
+        sim.start();
+      } catch (e) {
+        return;
       }
-      size();
-      addEventListener("resize", size);
-
-      var parts = [],
-        lx = -1,
-        ly = -1,
-        lt = 0,
-        running = false,
-        idleFrames = 0;
-
-      // cheap swirl field for fluid-like advection
-      function curl(x, y, t) {
-        return {
-          x:
-            Math.sin(y * 0.0016 + t * 0.0005) +
-            Math.cos(x * 0.0011 - t * 0.0004),
-          y:
-            Math.cos(x * 0.0014 + t * 0.0006) -
-            Math.sin(y * 0.0012 + t * 0.0003),
-        };
-      }
-
+      // host is pointer-events:none, so feed the sim from window moves
+      var lx = -1,
+        ly = -1;
       addEventListener(
         "pointermove",
         function (e) {
-          var x = e.clientX * DPR,
-            y = e.clientY * DPR,
-            now = performance.now();
-          if (lx < 0) {
-            lx = x;
-            ly = y;
-            lt = now;
-          }
-          var dx = x - lx,
-            dy = y - ly,
-            dt = Math.max(now - lt, 1);
-          var speed = Math.min(Math.hypot(dx, dy) / dt, 3);
-          if (dx * dx + dy * dy < 16 * DPR * DPR) return;
-          lt = now;
-          var steps = Math.min(3, 1 + ((speed * 2) | 0));
-          for (var i = 0; i < steps; i++) {
-            var f = (i + 1) / steps;
-            parts.push({
-              x: lx + dx * f,
-              y: ly + dy * f,
-              vx: dx * 0.028 + (Math.random() - 0.5) * 0.5,
-              vy: dy * 0.028 - 0.3 - Math.random() * 0.35,
-              r: (9 + Math.random() * 10) * DPR,
-              sp: speed,
-              life: 0,
-              max: 55 + Math.random() * 45,
-              white: Math.random() < 0.3,
-            });
-          }
-          lx = x;
-          ly = y;
-          if (parts.length > 140) parts.splice(0, parts.length - 140);
-          if (!running) {
-            running = true;
-            requestAnimationFrame(tick);
-          }
+          var dx = lx < 0 ? 0 : e.clientX - lx;
+          var dy = ly < 0 ? 0 : e.clientY - ly;
+          lx = e.clientX;
+          ly = e.clientY;
+          if (dx * dx + dy * dy < 4) return;
+          try {
+            sim.splatAtLocation(e.clientX, e.clientY, dx * 8, dy * 8);
+          } catch (err) {}
         },
         { passive: true },
       );
-
-      function tick(t) {
-        // fade the previous frame instead of clearing — dye-smear trail
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.fillStyle = "rgba(0,0,0,0.1)";
-        ctx.fillRect(0, 0, W, H);
-        ctx.globalCompositeOperation = "lighter";
-        for (var i = parts.length - 1; i >= 0; i--) {
-          var p = parts[i];
-          p.life++;
-          if (p.life >= p.max) {
-            parts.splice(i, 1);
-            continue;
-          }
-          var c = curl(p.x, p.y, t);
-          p.vx += c.x * 0.075;
-          p.vy += c.y * 0.075 - 0.004;
-          p.vx *= 0.97;
-          p.vy *= 0.97;
-          p.x += p.vx * DPR;
-          p.y += p.vy * DPR;
-          p.r *= 1.006;
-          var k = p.life / p.max;
-          var a = 0.016 * (1 - k) * Math.min(1, k * 7);
-          var ang = Math.atan2(p.vy, p.vx);
-          var stretch = 1.6 + Math.min((p.sp || 0) * 1.2, 1.6);
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(ang);
-          ctx.scale(stretch, 1);
-          var g = ctx.createRadialGradient(0, 0, p.r * 0.12, 0, 0, p.r);
-          if (p.white) {
-            g.addColorStop(0, "rgba(235,230,245," + a * 0.9 + ")");
-            g.addColorStop(1, "rgba(235,230,245,0)");
-          } else {
-            g.addColorStop(0, "rgba(139,104,190," + a + ")");
-            g.addColorStop(0.55, "rgba(105,74,150," + a * 0.75 + ")");
-            g.addColorStop(1, "rgba(105,74,150,0)");
-          }
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(0, 0, p.r, 0, 6.2832);
-          ctx.fill();
-          ctx.restore();
-        }
-        if (parts.length) {
-          idleFrames = 0;
-          requestAnimationFrame(tick);
-        } else if (idleFrames++ < 60) {
-          requestAnimationFrame(tick); // keep fading the residue
-        } else {
-          running = false;
-          ctx.globalCompositeOperation = "source-over";
-          ctx.clearRect(0, 0, W, H);
-        }
-      }
     })();
   </script>
 </body>
