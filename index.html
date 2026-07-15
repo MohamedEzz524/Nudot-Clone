@@ -73,9 +73,7 @@
   <script>
     (function () {
       var isDesktop = !!(window.matchMedia && window.matchMedia('(min-width: 768px)').matches);
-      var src = isDesktop
-        ? 'images/home/slider1/slider01.mp4'
-        : 'images/home/slider1/slider01_s.mp4';
+      var src = 'images/home/slide1.mp4';
       var v = document.createElement('video');
       v.src = src;
       v.preload = 'auto';
@@ -801,7 +799,7 @@ h3 {
       bottom: 12vh;
       left: 50%;
       transform: translateX(-50%);
-      width: 720px;
+      width: fit-content;
       max-width: 100%;
       z-index: 600;
       padding-bottom: 0;
@@ -1475,6 +1473,111 @@ h3 {
       letter-spacing: 3px;
       color: #aaa;
       transform: scaleY(-1);
+    }
+
+
+    /* ── Perfume carousel (intro-panel) ───────────────────────────────────
+       Each card layers two stills of the same bottle: the black-background
+       shot sits behind on mix-blend-mode:screen, which drops its black and
+       leaves only the glow/reflection over the video; the cut-out bottle
+       sits on top. The glow only resolves on the active card. */
+    .pf-carousel {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      pointer-events: auto;
+    }
+
+    .pf-stage {
+      position: absolute;
+      inset: 0;
+      perspective: 1200px;
+    }
+
+    .pf-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: clamp(440px, 58vw, 880px);
+      transform: translate(-50%, -50%);
+      will-change: transform, opacity;
+      cursor: pointer;
+    }
+
+    .pf-media {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+    }
+
+    /* The stills carry a lot of transparent padding, so zoom both layers by the
+       same factor: the bottle fills the frame and the glow stays registered. */
+    .pf-media img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transform: scale(1.5);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .pf-glow {
+      mix-blend-mode: screen;
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .pf-bottle {
+      z-index: 2;
+    }
+
+    /* absolute so the card's box stays the square media only — otherwise the
+       label's height offsets the bottle above the vertical centre */
+    .pf-name {
+      position: absolute;
+      top: calc(100% + 16px);
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      font-family: "forma-djr-mono", ui-monospace, monospace;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.45;
+      white-space: nowrap;
+      transition: opacity 0.35s ease;
+    }
+
+    .pf-card.is-active .pf-name {
+      opacity: 1;
+    }
+
+    /* side cards double as the control: glassy lift on hover */
+    .pf-card:not(.is-active) .pf-media::after {
+      content: "";
+      position: absolute;
+      inset: -6% -8%;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(6px) saturate(120%);
+      -webkit-backdrop-filter: blur(6px) saturate(120%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .pf-card:not(.is-active):hover .pf-media::after { opacity: 1; }
+    .pf-card:not(.is-active):hover .pf-name { opacity: 0.85; }
+    .pf-card.is-active { cursor: default; }
+
+
+    @media (max-width: 767px) {
+      .pf-card { width: clamp(170px, 54vw, 240px); }
     }
 
     .intro-panel {
@@ -5212,19 +5315,6 @@ h3 {
             </div>
 
             <div class="bottom-ui-container">
-              <div class="slide-section">COSMIC SERIES</div>
-              <div class="slide-counter">
-                <div class="counter-nav prev-slide">⟪</div>
-                <div class="counter-display">
-                  <span class="current-slide">01</span>
-                  <span class="counter-divider">//</span>
-                  <span class="total-slides">05</span>
-                </div>
-                <div class="counter-nav next-slide">⟫</div>
-              </div>
-              <div class="slide-title-container">
-                <div class="slide-title">Cosmic Harmony</div>
-              </div>
               <div class="drag-indicator"></div>
               <div class="thumbs-container">
                 <div class="slide-thumbs"></div>
@@ -5236,18 +5326,16 @@ h3 {
 
 
               <div class="slide">
-                <div class="slide__img" data-video="images/home/slider1/slider01.mp4"
-                  data-mobile-video="images/home/slider1/slider01_s.mp4" data-thumb="images/home/slider1/slider01.webp"
-                  data-mobile-thumb="images/home/slider1/slider01_s.webp" data-title="Nudot Creative Studio">
+                <div class="slide__img" data-video="images/home/slide1.mp4"
+                  data-thumb="images/home/slide1.webp" data-title="Nudot Creative Studio">
                 </div>
               </div>
 
 
 
               <div class="slide">
-                <div class="slide__img" data-video="images/home/slider2/slider02pro.mp4"
-                  data-mobile-video="images/home/slider2/slider02_s.mp4" data-thumb="images/home/slider2/slider02.webp"
-                  data-mobile-thumb="images/home/slider2/slider02_s.webp" data-title="Visual Direction">
+                <div class="slide__img" data-video="images/home/slide2.mp4"
+                  data-thumb="images/home/slide2.webp" data-title="Visual Direction">
                 </div>
               </div>
 
@@ -5257,42 +5345,6 @@ h3 {
 
               <!-- 新增輪播時，只要複製一個 .slide，改 data-image 或 data-video，並補上 data-title。
                    手機版可另外填 data-mobile-image / data-mobile-video / data-mobile-thumb；未填會沿用桌機素材。 -->
-              <div class="slide">
-                <!-- <div class="slide__img" data-video="images/home/banner05.mp4" data-thumb="images/home/banner05.jpg"
-              data-title="Brand Film"></div> -->
-                <div class="slide__img" data-image="images/home/slider3/slider03.webp"
-                  data-mobile-image="images/home/slider3/slider03_m.webp"
-                  data-thumb="images/home/slider3/slider03_pc.webp"
-                  data-mobile-thumb="images/home/slider3/slider03_s.webp" data-title="High-End Skincare"></div>
-              </div>
-
-
-
-              <!-- <div class="slide">
-                <div class="slide__img" data-image="images/home/banner01.webp"  data-mobile-image="images/home/banner01_s.webp"
-                  data-mobile-thumb="images/home/banner01_s.webp" data-title="Cosmic Harmony"></div>
-              </div> -->
-
-
-
-              <div class="slide">
-                <div class="slide__img" data-image="images/home/slider4/slider04.webp"
-                  data-mobile-image="images/home/slider4/slider04_m.webp"
-                  data-thumb="images/home/slider4/slider04_pc.webp"
-                  data-mobile-thumb="images/home/slider4/slider04_s.webp" data-title="METERSEVEN"></div>
-              </div>
-
-
-
-
-
-              <div class="slide">
-                <div class="slide__img" data-image="images/home/slider5/slider05.webp"
-                  data-mobile-image="images/home/slider5/slider05_m.webp"
-                  data-thumb="images/home/slider5/slider05_pc.webp"
-                  data-mobile-thumb="images/home/slider5/slider05_s.webp" data-title="PERFORMANCE FLUIDS"></div>
-              </div>
-
             </div>
           </div>
 
@@ -5306,19 +5358,8 @@ h3 {
               <video autoplay muted loop playsinline preload="none" disableRemotePlayback data-lazy-video
                 data-lazy-on-scroll="true"
                 style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.45;">
-                <source data-src="images/wavebg.mp4" type="video/mp4">
+                <source data-src="images/x.mp4" type="video/mp4">
               </video>
-
-              <div class="glow-bottom-left" id="ui-glow1"></div>
-              <div class="glow-center-left" id="ui-glow2"></div>
-
-            <nav class="dark-nav" id="ui-nav">
-                <a href="/about" data-transition-label="About">核點創意</a>
-                <a href="/work" data-transition-label="Work">設計案例</a>
-                  <a href="/lab" data-transition-label="Labs">核點實驗室</a>
-                  <a href="/news" data-transition-label="Contact">核點洞察</a>
-                  <a href="/contact" data-transition-label="Contact">聯繫我們</a>
-              </nav>
               <div class="scroll-indicator" id="ui-scroll">
                 <div class="si-block">
                   <div class="si-letter"><img src="images/down.svg" alt="" aria-hidden="true"></div>
@@ -5328,50 +5369,35 @@ h3 {
               </div>
 
               <div id="intro-panel" class="intro-panel">
-                <div class="ip-top-chapter1">( 品牌策略專家 )</div>
-                <div class="ip-top-header">
-                  <h2 class="ip-top-chapter">( 守護美學核心，定義數位落點 )</h2>
-                </div>
+                <div class="ip-top-header"></div>
                 <div class="ip-bottom-letter"></div>
 
-                <div class="dual-wave-wrapper" id="ip-wave-wrapper">
-                  <div class="wave-column wave-column-left">
-                    <div class="animated-text" data-image="images/home/company/1.webp">Core-Site</div>
-                    <div class="animated-text" data-image="images/home/company/2.webp">Gen-AI Visual</div>
-                    <div class="animated-text" data-image="images/home/company/3.webp">Motion Flow</div>
-                    <div class="animated-text" data-image="images/home/company/4.webp">WebGL Realm</div>
-                    <div class="animated-text" data-image="images/home/company/5.webp">3D Matrix</div>
-                    <div class="animated-text" data-image="images/home/company/6.webp">Interaction</div>
-                    <div class="animated-text" data-image="images/home/company/7.webp">Pixel Perfect</div>
-                    <div class="animated-text" data-image="images/home/company/8.webp">Logic Build</div>
-                    <div class="animated-text" data-image="images/home/company/9.webp">Fluid UI</div>
-                    <div class="animated-text" data-image="images/home/company/10.webp">Aero Design</div>
-                    <div class="animated-text" data-image="images/home/company/11.webp">Pure Code</div>
-                    <div class="animated-text" data-image="images/home/company/12.webp">Digital Art</div>
-                  </div>
-                  <div class="wave-column wave-column-right">
-                    <div class="animated-text">Strategy</div>
-                    <div class="animated-text">Design</div>
-                    <div class="animated-text">Tech</div>
-                    <div class="animated-text">Creative</div>
-                    <div class="animated-text">Motion</div>
-                    <div class="animated-text">Brand</div>
-                    <div class="animated-text">Future</div>
-                    <div class="animated-text">Vision</div>
-                    <div class="animated-text">System</div>
-                    <div class="animated-text">Labs</div>
-                    <div class="animated-text">Core</div>
-                    <div class="animated-text">Craft</div>
+                <div class="pf-carousel" id="pf-carousel">
+                  <div class="pf-stage" id="pf-stage">
+                    <div class="pf-card" data-i="0">
+                      <div class="pf-media">
+                        <img class="pf-glow" src="images/perfumes/p1-glow.webp" alt="" aria-hidden="true" decoding="async">
+                        <img class="pf-bottle" src="images/perfumes/p1.webp" alt="Veil Of Orris" decoding="async">
+                      </div>
+                      <div class="pf-name">Veil Of Orris</div>
+                    </div>
+                    <div class="pf-card" data-i="1">
+                      <div class="pf-media">
+                        <img class="pf-glow" src="images/perfumes/p2-glow.webp" alt="" aria-hidden="true" decoding="async">
+                        <img class="pf-bottle" src="images/perfumes/p2.webp" alt="OAKBANUM" decoding="async">
+                      </div>
+                      <div class="pf-name">OAKBANUM</div>
+                    </div>
+                    <div class="pf-card" data-i="2">
+                      <div class="pf-media">
+                        <img class="pf-glow" src="images/perfumes/p3-glow.webp" alt="" aria-hidden="true" decoding="async">
+                        <img class="pf-bottle" src="images/perfumes/p3.webp" alt="AURELINTH" decoding="async">
+                      </div>
+                      <div class="pf-name">AURELINTH</div>
+                    </div>
                   </div>
                 </div>
-                <div class="image-thumbnail-wrapper">
-                  <div class="ip-thumb-row">
-                    <div class="ip-thumb-line"></div>
-                    <img src="images/home/company/1.webp" alt="" class="image-thumbnail" id="ip-wave-thumb" width="128"
-                      height="64" loading="lazy" decoding="async">
-                    <div class="ip-thumb-line"></div>
-                  </div>
-                </div>
+
                 <canvas id="ip-reveal-canvas" data-reveal-mode="css-mask"
                   style="position:absolute;inset:0;width:100%;height:100%;mix-blend-mode:destination-out;pointer-events:none;z-index:200;display:none;"></canvas>
               </div>
@@ -6840,7 +6866,7 @@ h3 {
 
         const totalSlidesEl = document.querySelector(".total-slides");
         if (totalSlidesEl) totalSlidesEl.textContent = String(slideCount).padStart(2, "0");
-        document.documentElement.style.setProperty("--thumb-width", `${720 / slideCount}px`);
+        document.documentElement.style.setProperty("--thumb-width", `${Math.min(144, 720 / slideCount)}px`);
 
         document.querySelector(".prev-slide")?.addEventListener("click", () => { ensureTopAndLock(); slideshow.prev(); });
         document.querySelector(".next-slide")?.addEventListener("click", () => { ensureTopAndLock(); slideshow.next(); });
@@ -7075,7 +7101,8 @@ h3 {
       const introBottomTitle = introBottomLetter?.querySelector('.ip-top-title');
 
       // 🎯 _ipWave 在 intro-panel（dark-wrapper 內），手機版 display:none，完全跳過
-      const _ipWave = !isMobileInit ? (function () {
+      // intro-panel 現在是香水輪播，波浪文字已移除 → 一律走 no-op（與手機版同路徑）
+      const _ipWave = false ? (function () {
         const wrapper = document.getElementById('ip-wave-wrapper');
         const leftCol = wrapper.querySelector('.wave-column-left');
         const rightCol = wrapper.querySelector('.wave-column-right');
@@ -7964,7 +7991,7 @@ h3 {
                       scaleX: 1,
                       opacity: 1,
                       duration: 0.95,
-                      ease: 'power3.out',
+                      ease: EASE,
                       stagger: 0.06
                     }, 0.28);
                   }
@@ -7972,7 +7999,7 @@ h3 {
                     headerIntroTl.to(sideLetters, {
                       autoAlpha: 1,
                       duration: 0.72,
-                      ease: 'power2.out',
+                      ease: EASE,
                       stagger: 0.05
                     }, 0.22);
                   }
@@ -9621,7 +9648,6 @@ h3 {
   </script>
 
   <canvas id="film-grain-canvas" aria-hidden="true"></canvas>
-  <script src="js/noise.js?v=5" defer></script>
 
   <!-- =========================================================
        SECTION 3: CORE CAPABILITIES (3D Ring Gallery JS)
@@ -9732,13 +9758,23 @@ h3 {
         circleCount,
         circleImgCountUnit,
         circleImgTotalCount,
-        customImageUrls: [
-          // Optional manual override.
-          // You can use fewer than 72 images; the gallery will loop them automatically.
-          // "images/core-capabilities/ring/01.jpg",
-          // "images/core-capabilities/ring/02.jpg",
-          // "images/core-capabilities/ring/03.jpg",
-        ],
+        // Ring 1 purple, ring 2 white, ring 3 purple. Must supply exactly
+        // circleImgTotalCount urls: createTextureUrlList() maps by index %
+        // length, so a shorter list would loop and bleed colours across rings.
+        customImageUrls: (() => {
+          const dir = "images/core-capabilities/ring";
+          const purple = [1, 2, 3, 4, 5, 6].map((n) => `${dir}/p${n}.webp`);
+          const white = [1, 2, 3, 4, 5, 6].map((n) => `${dir}/w${n}.webp`);
+          const fill = (pool, count) =>
+            Array.from({ length: count }, (_, i) => pool[i % pool.length]);
+          const slots = (ring) =>
+            (sumFormula(ring + 1) - sumFormula(ring)) * circleImgCountUnit;
+          return [
+            ...fill(purple, slots(0)),
+            ...fill(white, slots(1)),
+            ...fill(purple, slots(2)),
+          ];
+        })(),
         // Automatic folder scan uses contiguous names like:
         // images/core-capabilities/ring/01.jpg
         // images/core-capabilities/ring/02.jpg
@@ -10393,6 +10429,97 @@ h3 {
   </script>
 
 
+
+  <script>
+    /* Perfume carousel: active centred, one hint each side, infinite.
+       Side cards keep their glow layer at opacity 0 and resolve it to 1
+       while they travel into the active slot. */
+    (function () {
+      function init() {
+        var stage = document.getElementById('pf-stage');
+        if (!stage || typeof gsap === 'undefined') return;
+        var cards = Array.prototype.slice.call(stage.querySelectorAll('.pf-card'));
+        if (!cards.length) return;
+
+        var N = cards.length;
+        var DUR = 1.2;   // match Lenis duration
+        var EASE = 'expo.out';  // match Lenis default easing
+        var active = 0;
+
+        // shortest signed distance to `active`, so the ends wrap into -1 / +1
+        function offsetOf(i) {
+          var d = ((i - active) % N + N) % N;
+          return d > N / 2 ? d - N : d;
+        }
+
+        function layout(animate) {
+          // push hints to the edges so each sits half outside the viewport
+          var spread = window.innerWidth / 2;
+          var d = animate ? DUR : 0;
+          cards.forEach(function (card, i) {
+            var o = offsetOf(i);
+            var isActive = o === 0;
+            gsap.to(card, {
+              x: o * spread,
+              scale: isActive ? 1 : 0.6,
+              opacity: Math.abs(o) > 1 ? 0 : 1,
+              duration: d,
+              ease: EASE,
+              overwrite: 'auto'
+            });
+            gsap.to(card.querySelector('.pf-glow'), {
+              opacity: isActive ? 1 : 0,
+              duration: d,
+              ease: EASE,
+              overwrite: 'auto'
+            });
+            card.style.zIndex = isActive ? 3 : 2 - Math.abs(o);
+            card.classList.toggle('is-active', isActive);
+          });
+        }
+
+        function go(dir) {
+          active = ((active + dir) % N + N) % N;
+          layout(true);
+        }
+
+        gsap.set(cards, { xPercent: -50, yPercent: -50 });
+        layout(false);
+
+        var lock = false;
+        function step(dir) {
+          if (lock) return;
+          lock = true;
+          go(dir);
+          setTimeout(function () { lock = false; }, 420);
+        }
+        cards.forEach(function (card, i) {
+          card.addEventListener('click', function () {
+            var o = offsetOf(i);
+            if (o !== 0) go(o);
+          });
+        });
+        var stageEl = document.getElementById('pf-carousel');
+        if (stageEl) {
+          var dx = 0, down = false, sx = 0;
+          stageEl.addEventListener('pointerdown', function (e) { down = true; sx = e.clientX; dx = 0; });
+          stageEl.addEventListener('pointermove', function (e) {
+            if (!down) return;
+            dx = e.clientX - sx;
+            if (Math.abs(dx) > 60) { down = false; step(dx < 0 ? 1 : -1); }
+          });
+          window.addEventListener('pointerup', function () { down = false; });
+        }
+        window.addEventListener('resize', function () { layout(false); });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
 </body>
 
 </html>
