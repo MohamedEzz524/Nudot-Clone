@@ -1562,7 +1562,7 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        width: clamp(380px, 48vw, 720px);
+        width: clamp(300px, 36vw, 540px);
         transform: translate(-50%, -50%);
         will-change: transform, opacity;
         cursor: pointer;
@@ -5355,6 +5355,66 @@
         font-weight: 700;
       }
 
+      /* product info block under the carousel (design placeholders) */
+      .pf-info {
+        position: absolute;
+        left: 50%;
+        top: calc(50% + clamp(140px, 17vw, 260px));
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        z-index: 30;
+        text-align: center;
+      }
+      .pf-info .pf-title {
+        position: static;
+        transform: none;
+      }
+      .pf-desc {
+        margin: 0;
+        font-family: "forma-djr-mono", ui-monospace, monospace;
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        color: rgba(255, 255, 255, 0.66);
+        max-width: 460px;
+      }
+      .pf-price {
+        font-family: "forma-djr-mono", ui-monospace, monospace;
+        font-size: 12px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.85);
+      }
+      .pf-shop {
+        margin-top: 4px;
+        height: 44px;
+        padding: 0 26px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 999px;
+        color: #fff;
+        cursor: pointer;
+        pointer-events: auto;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 700;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        background: radial-gradient(120% 120% at 30% 20%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05) 60%);
+        backdrop-filter: blur(14px) saturate(160%);
+        -webkit-backdrop-filter: blur(14px) saturate(160%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 24px rgba(0, 0, 0, 0.25);
+        transition: background 0.35s ease, transform 0.35s ease;
+      }
+      .pf-shop:hover {
+        transform: translateY(-2px);
+        background: radial-gradient(120% 120% at 30% 20%, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.09) 60%);
+      }
+
       /* mobile header: burger + icon-only buttons */
       #brand-nav .bn-burger {
         display: none;
@@ -6471,9 +6531,14 @@
                   <div class="ip-bottom-letter"></div>
 
                   <div class="pf-carousel" id="pf-carousel">
-                  <div class="pf-title" id="pf-title">AURELINTH</div>
+                  <div class="pf-info" id="pf-info">
+                    <div class="pf-title" id="pf-title">AURELINTH</div>
+                    <p class="pf-desc" id="pf-desc">Amber warmth over midnight woods</p>
+                    <div class="pf-price" id="pf-price">SAR 620 · 50ml Extrait</div>
+                    <button class="pf-shop" type="button">Shop Now</button>
+                  </div>
                     <div class="pf-stage" id="pf-stage">
-                      <div class="pf-card" data-i="0">
+                      <div class="pf-card" data-i="0" data-desc="Amber warmth over midnight woods" data-price="SAR 620 · 50ml Extrait">
                         <div class="pf-media">
                           <img
                             class="pf-glow"
@@ -6491,7 +6556,7 @@
                         </div>
                         <div class="pf-name">AURELINTH</div>
                       </div>
-                      <div class="pf-card" data-i="1">
+                      <div class="pf-card" data-i="1" data-desc="Smoked oak resin and golden labdanum" data-price="SAR 580 · 50ml Extrait">
                         <div class="pf-media">
                           <img
                             class="pf-glow"
@@ -6509,7 +6574,7 @@
                         </div>
                         <div class="pf-name">OAKBANUM</div>
                       </div>
-                      <div class="pf-card" data-i="2">
+                      <div class="pf-card" data-i="2" data-desc="Powdered iris beneath a violet veil" data-price="SAR 640 · 50ml Extrait">
                         <div class="pf-media">
                           <img
                             class="pf-glow"
@@ -8407,6 +8472,16 @@
         }
 
         transition(currentIndex, nextIndex, direction, onCompleteCallback) {
+          // incoming slide's video always restarts from the beginning —
+          // this covers every path (swipe/drag/arrows via navigate, thumbs via goTo)
+          const incomingVid = this.videoEls ? this.videoEls[nextIndex] : null;
+          if (incomingVid) {
+            try {
+              incomingVid.currentTime = 0;
+              const pp = incomingVid.play();
+              if (pp && pp.catch) pp.catch(function () {});
+            } catch (e) {}
+          }
           const transitionToken = {};
           this._transitionToken = transitionToken;
 
@@ -8415,6 +8490,16 @@
             this.loadTextureAt(nextIndex),
           ]).then(([currentTexture, nextTexture]) => {
             if (this._transitionToken !== transitionToken) return;
+            // the incoming texture's backing element IS the slide video —
+            // restart it from the beginning on every navigation
+            const nextMedia = nextTexture && nextTexture.image;
+            if (nextMedia && typeof nextMedia.currentTime === "number") {
+              try {
+                nextMedia.currentTime = 0;
+                const pp = nextMedia.play();
+                if (pp && pp.catch) pp.catch(function () {});
+              } catch (e) {}
+            }
             if (!currentTexture || !nextTexture) {
               if (onCompleteCallback) onCompleteCallback();
               return;
@@ -11942,11 +12027,8 @@
               };
             };
 
+            // grid mouse trail disabled — replaced by the purple smoke cursor
             updateDynamicStyles();
-            initializeGrid();
-            window.addEventListener("mousemove", handleMouseMove, {
-              passive: true,
-            });
             window.addEventListener("resize", initializeGrid, {
               passive: true,
             });
@@ -13352,19 +13434,28 @@
               card.style.zIndex = isActive ? 3 : 2 - Math.abs(o);
               card.classList.toggle("is-active", isActive);
             });
-            var titleEl = document.getElementById("pf-title");
-            if (titleEl) {
-              var nameEl = cards[active].querySelector(".pf-name");
+            var infoEl = document.getElementById("pf-info");
+            if (infoEl) {
+              var card = cards[active];
+              var nameEl = card.querySelector(".pf-name");
               var next = nameEl ? nameEl.textContent.trim() : "";
-              if (titleEl.textContent !== next) {
+              var titleEl = document.getElementById("pf-title");
+              var descEl = document.getElementById("pf-desc");
+              var priceEl = document.getElementById("pf-price");
+              var apply = function () {
+                if (titleEl) titleEl.textContent = next;
+                if (descEl) descEl.textContent = card.dataset.desc || "";
+                if (priceEl) priceEl.textContent = card.dataset.price || "";
+              };
+              if (titleEl && titleEl.textContent !== next) {
                 if (animate) {
                   gsap
                     .timeline()
-                    .to(titleEl, { opacity: 0, y: 12, duration: 0.3, ease: "power2.in" })
-                    .add(function () { titleEl.textContent = next; })
-                    .to(titleEl, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" });
+                    .to(infoEl, { opacity: 0, y: 12, duration: 0.3, ease: "power2.in" })
+                    .add(apply)
+                    .to(infoEl, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" });
                 } else {
-                  titleEl.textContent = next;
+                  apply();
                 }
               }
             }
