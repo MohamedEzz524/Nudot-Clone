@@ -157,12 +157,10 @@
     </script>
 
     <!-- Non-blocking: Adobe Fonts -->
-    <noscript>
-      </noscript>
+    <noscript> </noscript>
 
     <!-- Non-blocking: Google Fonts (combined into one request) -->
-    <noscript>
-      </noscript>
+    <noscript> </noscript>
 
     <link rel="icon" href="images/fav.png" type="image/png" />
     <!-- Critical inline: page-transitions (formerly page-transitions.css) -->
@@ -5132,17 +5130,72 @@
     </style>
     <style id="brand-overrides">
       /* ── Brand fonts (local files) replace every legacy webfont family ── */
-      @font-face { font-family: "Zalando Sans SemiExpanded"; src: url("fonts/mb-ph-one-regular.ttf") format("truetype"); font-weight: 100 500; font-display: swap; }
-      @font-face { font-family: "Zalando Sans SemiExpanded"; src: url("fonts/mb-ph-one-bold.ttf") format("truetype"); font-weight: 501 900; font-display: swap; }
-      @font-face { font-family: "DM Sans"; src: url("fonts/mb-ph-one-regular.ttf") format("truetype"); font-weight: 100 500; font-display: swap; }
-      @font-face { font-family: "DM Sans"; src: url("fonts/mb-ph-one-bold.ttf") format("truetype"); font-weight: 501 900; font-display: swap; }
-      @font-face { font-family: "Noto Sans KR"; src: url("fonts/mb-ph-one-regular.ttf") format("truetype"); font-weight: 100 500; font-display: swap; }
-      @font-face { font-family: "Noto Sans KR"; src: url("fonts/mb-ph-one-bold.ttf") format("truetype"); font-weight: 501 900; font-display: swap; }
-      @font-face { font-family: "komet"; src: url("fonts/mb-ph-one-regular.ttf") format("truetype"); font-weight: 100 900; font-display: swap; }
-      @font-face { font-family: "PP Neue Montreal"; src: url("fonts/mb-ph-one-regular.ttf") format("truetype"); font-weight: 100 900; font-display: swap; }
-      @font-face { font-family: "forma-djr-mono"; src: url("fonts/mb-ph-two-light.ttf") format("truetype"); font-weight: 100 900; font-display: swap; }
-      @font-face { font-family: "lores-12"; src: url("fonts/mb-ph-two-light.ttf") format("truetype"); font-weight: 100 900; font-display: swap; }
-      @font-face { font-family: "Bitcount Grid Single"; src: url("fonts/far-from-homecoming.otf") format("opentype"); font-weight: 100 900; font-display: swap; }
+      @font-face {
+        font-family: "Zalando Sans SemiExpanded";
+        src: url("fonts/mb-ph-one-regular.ttf") format("truetype");
+        font-weight: 100 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Zalando Sans SemiExpanded";
+        src: url("fonts/mb-ph-one-bold.ttf") format("truetype");
+        font-weight: 501 900;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "DM Sans";
+        src: url("fonts/mb-ph-one-regular.ttf") format("truetype");
+        font-weight: 100 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "DM Sans";
+        src: url("fonts/mb-ph-one-bold.ttf") format("truetype");
+        font-weight: 501 900;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Noto Sans KR";
+        src: url("fonts/mb-ph-one-regular.ttf") format("truetype");
+        font-weight: 100 500;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Noto Sans KR";
+        src: url("fonts/mb-ph-one-bold.ttf") format("truetype");
+        font-weight: 501 900;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "komet";
+        src: url("fonts/mb-ph-one-regular.ttf") format("truetype");
+        font-weight: 100 900;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "PP Neue Montreal";
+        src: url("fonts/mb-ph-one-regular.ttf") format("truetype");
+        font-weight: 100 900;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "forma-djr-mono";
+        src: url("fonts/mb-ph-two-light.ttf") format("truetype");
+        font-weight: 100 900;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "lores-12";
+        src: url("fonts/mb-ph-two-light.ttf") format("truetype");
+        font-weight: 100 900;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Bitcount Grid Single";
+        src: url("fonts/far-from-homecoming.otf") format("opentype");
+        font-weight: 100 900;
+        font-display: swap;
+      }
 
       /* ── Rings section: text removed, logo only in the middle ── */
       #core-capabilities .giant-title,
@@ -5170,18 +5223,36 @@
         border: none;
         border-radius: 50%;
         color: #fff;
-        background: radial-gradient(120% 120% at 30% 20%, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.05) 60%);
+        background: radial-gradient(
+          120% 120% at 30% 20%,
+          rgba(255, 255, 255, 0.16),
+          rgba(255, 255, 255, 0.05) 60%
+        );
         backdrop-filter: blur(14px) saturate(160%);
         -webkit-backdrop-filter: blur(14px) saturate(160%);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 8px 24px rgba(0, 0, 0, 0.25);
-        transition: background 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.18),
+          0 8px 24px rgba(0, 0, 0, 0.25);
+        transition:
+          background 0.35s ease,
+          transform 0.35s ease,
+          box-shadow 0.35s ease;
       }
-      #brand-nav .bn-btn svg { width: 20px; height: 20px; }
+      #brand-nav .bn-btn svg {
+        width: 20px;
+        height: 20px;
+      }
       #brand-nav .bn-btn:hover {
-        transform: translateY(-2px) scale(1.05);
         border: none;
-        background: radial-gradient(120% 120% at 30% 20%, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.09) 60%);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 10px 30px rgba(0, 0, 0, 0.35);
+
+        background: radial-gradient(
+          120% 120% at 30% 20%,
+          rgba(255, 255, 255, 0.28),
+          rgba(255, 255, 255, 0.09) 60%
+        );
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.28),
+          0 10px 30px rgba(0, 0, 0, 0.35);
       }
       #brand-nav .bn-link {
         padding: 10px 16px;
@@ -5196,10 +5267,96 @@
       }
 
       /* ── Carousel: vertical scroll passes through; drags are horizontal ── */
-      .pf-carousel { touch-action: pan-y; }
-      .pf-card { user-select: none; -webkit-user-select: none; }
+      .pf-carousel {
+        touch-action: pan-y;
+      }
+      .pf-card {
+        user-select: none;
+        -webkit-user-select: none;
+      }
       /* hover backdrop on side products removed */
-      .pf-card .pf-media::after { display: none !important; }
+      .pf-card .pf-media::after {
+        display: none !important;
+      }
+
+      /* product title: larger, lifted into view */
+      .pf-name {
+        font-size: 20px !important;
+        letter-spacing: 0.26em !important;
+        top: calc(100% - 56px) !important;
+      }
+
+      /* DOWN indicator removed */
+      #ui-scroll,
+      .scroll-indicator {
+        display: none !important;
+      }
+
+      /* mobile header: burger + icon-only buttons */
+      #brand-nav .bn-burger {
+        display: none;
+      }
+      .bn-mobile-menu {
+        position: fixed;
+        top: 72px;
+        left: 16px;
+        z-index: 8999;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 12px;
+        min-width: 172px;
+        border-radius: 16px;
+        background: rgba(22, 18, 32, 0.6);
+        backdrop-filter: blur(18px) saturate(150%);
+        -webkit-backdrop-filter: blur(18px) saturate(150%);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px);
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease,
+          visibility 0.3s;
+      }
+      .bn-mobile-menu.open {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+      }
+      .bn-mobile-menu a {
+        font-family: "forma-djr-mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.75);
+        text-decoration: none;
+        padding: 10px;
+        border-radius: 8px;
+      }
+      .bn-mobile-menu a:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.07);
+      }
+      @media (max-width: 767px) {
+        #brand-nav .bn-left {
+          display: flex !important;
+        }
+        #brand-nav .bn-left .bn-menu {
+          display: none !important;
+        }
+        #brand-nav .bn-burger {
+          display: inline-flex;
+        }
+        #brand-nav .bn-label {
+          display: none;
+        }
+        #brand-nav .bn-btn {
+          width: 44px;
+          height: 44px;
+          padding: 0;
+          gap: 0;
+        }
+      }
 
       /* labeled glass pills */
       #brand-nav .bn-btn {
@@ -5260,15 +5417,32 @@
         <!-- ── NAV (頂部原始三元素) ── -->
         <nav id="brand-nav" aria-label="Primary">
           <div class="bn-left">
-            <div class="bn-menu">
-              <button class="bn-link" type="button">
-                Products
-              </button>
+            <button
+              class="bn-btn bn-burger"
+              type="button"
+              aria-label="Menu"
+              aria-expanded="false"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                aria-hidden="true"
+              >
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            </button>
+            <div class="bn-mobile-menu" id="bn-mobile-menu">
+              <a href="#">Products</a>
+              <a href="#">Learn</a>
             </div>
             <div class="bn-menu">
-              <button class="bn-link" type="button">
-                Learn
-              </button>
+              <button class="bn-link" type="button">Products</button>
+            </div>
+            <div class="bn-menu">
+              <button class="bn-link" type="button">Learn</button>
             </div>
           </div>
           <a class="bn-logo" id="brand-logo" href="#" aria-label="NUDOT home">
@@ -5276,11 +5450,35 @@
           </a>
           <div class="bn-right">
             <button class="bn-btn bn-icon" type="button" aria-label="Account">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4" /><path d="M5.5 19.2c1.2-3 3.6-4.6 6.5-4.6s5.3 1.6 6.5 4.6" /></svg>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="8" r="3.4" />
+                <path d="M5.5 19.2c1.2-3 3.6-4.6 6.5-4.6s5.3 1.6 6.5 4.6" />
+              </svg>
               <span class="bn-label">Account</span>
             </button>
             <button class="bn-btn bn-icon" type="button" aria-label="Cart">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 8.5h11l-.9 10a1.8 1.8 0 0 1-1.8 1.6H9.2a1.8 1.8 0 0 1-1.8-1.6z" /><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5" /></svg>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6.5 8.5h11l-.9 10a1.8 1.8 0 0 1-1.8 1.6H9.2a1.8 1.8 0 0 1-1.8-1.6z"
+                />
+                <path d="M9 8.5V7a3 3 0 0 1 6 0v1.5" />
+              </svg>
               <span class="bn-label">Cart</span>
             </button>
           </div>
@@ -5709,15 +5907,20 @@
                 // …then expands away while the logo grows out of it
                 .to(
                   orb,
-                  { scale: 10, opacity: 0, duration: 0.65, ease: "power3.inOut" },
+                  {
+                    scale: 7.2,
+                    opacity: 0,
+                    duration: 0.55,
+                    ease: "power2.inOut",
+                  },
                   "morph",
                 );
             }
             tl.fromTo(
               dot,
-              { scale: 0.12, opacity: 0 },
-              { scale: 1, opacity: 1, duration: 0.65, ease: "power3.out" },
-              orb ? "morph+=0.08" : 0,
+              { scale: 0.55, opacity: 0 },
+              { scale: 1, opacity: 1, duration: 0.55, ease: "power2.inOut" },
+              orb ? "morph" : 0,
             ).to(
               dot,
               {
@@ -6187,9 +6390,11 @@
                     inset: 0;
                     width: 100%;
                     height: 100%;
-                    object-fit: cover;
+                    object-fit: contain;
                     z-index: 0;
                     opacity: 0.45;
+                    -webkit-mask-image: radial-gradient(ellipse 58% 58% at 50% 50%, black 42%, transparent 72%);
+                    mask-image: radial-gradient(ellipse 58% 58% at 50% 50%, black 42%, transparent 72%);
                   "
                 >
                   <source data-src="images/x.mp4" type="video/mp4" />
@@ -7141,7 +7346,19 @@
                 <div class="media-gallery">
                   <div class="media-track">
                     <div class="center-divider">
-                      <div class="center-video-box"><img src="images/logo.svg" alt="NUDOT" class="ccap-center-logo" style="width:58%;height:auto;display:block;margin:auto" /></div>
+                      <div class="center-video-box">
+                        <img
+                          src="images/logo.svg"
+                          alt="NUDOT"
+                          class="ccap-center-logo"
+                          style="
+                            width: 58%;
+                            height: auto;
+                            display: block;
+                            margin: auto;
+                          "
+                        />
+                      </div>
                       <div class="service-label reveal-wrap text1vw">
                         <h2 class="reveal-inner" style="margin: 0">
                           跨領域視覺與數位整合
@@ -12666,8 +12883,8 @@
           const sumFormula = (count) => (count * (count + 1)) / 2;
           const isOdd = (count) => count % 2 === 1;
           const { circleCount, circleImgCountUnit } = CCAP_RING_GALLERY_CONFIG;
-          const radius = 6.4;
-          const radiusOffset = 2.3;
+          const radius = 5.1;
+          const radiusOffset = 1.9;
           const firstRingInset = 0.65;
           const secondRingInset = 0.8;
           const scale = 0.8;
@@ -13116,6 +13333,24 @@
         } else {
           init();
         }
+      })();
+    </script>
+    <script>
+      (function () {
+        var b = document.querySelector(".bn-burger");
+        var m = document.getElementById("bn-mobile-menu");
+        if (!b || !m) return;
+        b.addEventListener("click", function () {
+          var open = m.classList.toggle("open");
+          b.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+        document.addEventListener("click", function (e) {
+          if (!m.classList.contains("open")) return;
+          if (!m.contains(e.target) && !b.contains(e.target)) {
+            m.classList.remove("open");
+            b.setAttribute("aria-expanded", "false");
+          }
+        });
       })();
     </script>
   </body>
