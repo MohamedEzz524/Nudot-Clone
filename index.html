@@ -8486,6 +8486,19 @@
           updateSlideTitle(index);
           updateDragLines(index, true);
 
+          // the incoming slide's video always restarts from the beginning
+          const incomingVid =
+            this.webgl && this.webgl.videoEls
+              ? this.webgl.videoEls[index]
+              : null;
+          if (incomingVid) {
+            try {
+              incomingVid.currentTime = 0;
+              const pp = incomingVid.play();
+              if (pp && pp.catch) pp.catch(function () {});
+            } catch (e) {}
+          }
+
           this.webgl.transition(previous, this.current, direction, () => {
             isAnimating = false;
             updateNavigationUI(false);
@@ -8596,6 +8609,35 @@
 
           webglManager = new WebGLManager("webgl-container", imageUrls);
           const slideshow = new Slideshow(webglManager, slideCount);
+
+          // auto-advance: hold the slide until its video reaches the end,
+          // then move on. Re-arms after each transition so a looping wrap
+          // can't double-fire.
+          (function () {
+            var armed = true;
+            function watch() {
+              var v =
+                webglManager && webglManager.videoEls
+                  ? webglManager.videoEls[slideshow.current]
+                  : null;
+              if (
+                armed &&
+                (typeof isAnimating === "undefined" || !isAnimating) &&
+                v &&
+                !v.paused &&
+                v.duration &&
+                v.currentTime >= v.duration - 0.15
+              ) {
+                armed = false;
+                slideshow.next();
+                setTimeout(function () {
+                  armed = true;
+                }, 1500);
+              }
+              requestAnimationFrame(watch);
+            }
+            requestAnimationFrame(watch);
+          })();
 
           const thumbsContainer = document.querySelector(".slide-thumbs");
           if (thumbsContainer) {
@@ -8740,9 +8782,9 @@
             const token = ++autoLoopStartToken;
             const armAutoLoop = () => {
               if (token !== autoLoopStartToken) return;
-              autoLoopTimer = setInterval(() => {
-                if (!isAnimating && !isHeroRenderSleeping()) slideshow.next();
-              }, 5000);
+              // fixed 5s auto-rotate disabled — slides advance when the
+              // active slide's video finishes (video-end watcher above)
+              autoLoopTimer = null;
             };
             const loaderReady =
               window._nudotLoaderDismissed === true ||
