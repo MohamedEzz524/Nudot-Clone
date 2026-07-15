@@ -1588,8 +1588,7 @@
       }
 
       .pf-glow {
-        mix-blend-mode: screen;
-        opacity: 0;
+        opacity: 1;
         z-index: 1;
       }
 
@@ -5292,6 +5291,23 @@
         display: none !important;
       }
 
+      /* one shared title below the carousel centre (per-card names feed it) */
+      .pf-name { display: none !important; }
+      .pf-title {
+        position: absolute;
+        left: 50%;
+        top: calc(50% + clamp(205px, 25vw, 400px));
+        transform: translateX(-50%);
+        font-family: "forma-djr-mono", ui-monospace, monospace;
+        font-size: 20px;
+        letter-spacing: 0.26em;
+        text-transform: uppercase;
+        color: #fff;
+        white-space: nowrap;
+        z-index: 30;
+        pointer-events: none;
+      }
+
       /* mobile header: burger + icon-only buttons */
       #brand-nav .bn-burger {
         display: none;
@@ -6390,14 +6406,12 @@
                     inset: 0;
                     width: 100%;
                     height: 100%;
-                    object-fit: contain;
+                    object-fit: cover;
                     z-index: 0;
                     opacity: 0.45;
-                    -webkit-mask-image: radial-gradient(ellipse 58% 58% at 50% 50%, black 42%, transparent 72%);
-                    mask-image: radial-gradient(ellipse 58% 58% at 50% 50%, black 42%, transparent 72%);
                   "
                 >
-                  <source data-src="images/x.mp4" type="video/mp4" />
+                  <source data-src="images/wavebg.mp4" type="video/mp4" />
                 </video>
                 <div class="scroll-indicator" id="ui-scroll">
                   <div class="si-block">
@@ -6414,6 +6428,7 @@
                   <div class="ip-bottom-letter"></div>
 
                   <div class="pf-carousel" id="pf-carousel">
+                  <div class="pf-title" id="pf-title">AURELINTH</div>
                     <div class="pf-stage" id="pf-stage">
                       <div class="pf-card" data-i="0">
                         <div class="pf-media">
@@ -7346,19 +7361,7 @@
                 <div class="media-gallery">
                   <div class="media-track">
                     <div class="center-divider">
-                      <div class="center-video-box">
-                        <img
-                          src="images/logo.svg"
-                          alt="NUDOT"
-                          class="ccap-center-logo"
-                          style="
-                            width: 58%;
-                            height: auto;
-                            display: block;
-                            margin: auto;
-                          "
-                        />
-                      </div>
+                      <div class="center-video-box"><video autoplay loop muted playsinline preload="none" disableRemotePlayback data-lazy-video data-lazy-priority="high"><source data-src="images/x.mp4" type="video/mp4" /></video></div>
                       <div class="service-label reveal-wrap text1vw">
                         <h2 class="reveal-inner" style="margin: 0">
                           跨領域視覺與數位整合
@@ -12502,7 +12505,7 @@
         constructor(selector) {
           this.container = document.querySelector(selector);
           this.config = {
-            bgColor: "#000000",
+            bgColor: "#030303",
           };
           this.params = {
             transitionProgress: 0,
@@ -13247,7 +13250,7 @@
           }
 
           function layout(animate) {
-            // push hints to the edges so each sits half outside the viewport
+            // all slides identical; hints sit half outside the viewport
             var spread = window.innerWidth / 2;
             var d = animate ? DUR : 0;
             cards.forEach(function (card, i) {
@@ -13255,14 +13258,8 @@
               var isActive = o === 0;
               gsap.to(card, {
                 x: o * spread,
-                scale: isActive ? 1 : 0.6,
+                scale: 1,
                 opacity: Math.abs(o) > 1 ? 0 : 1,
-                duration: d,
-                ease: EASE,
-                overwrite: "auto",
-              });
-              gsap.to(card.querySelector(".pf-glow"), {
-                opacity: isActive ? 1 : 0,
                 duration: d,
                 ease: EASE,
                 overwrite: "auto",
@@ -13270,6 +13267,22 @@
               card.style.zIndex = isActive ? 3 : 2 - Math.abs(o);
               card.classList.toggle("is-active", isActive);
             });
+            var titleEl = document.getElementById("pf-title");
+            if (titleEl) {
+              var nameEl = cards[active].querySelector(".pf-name");
+              var next = nameEl ? nameEl.textContent.trim() : "";
+              if (titleEl.textContent !== next) {
+                if (animate) {
+                  gsap
+                    .timeline()
+                    .to(titleEl, { opacity: 0, y: 12, duration: 0.3, ease: "power2.in" })
+                    .add(function () { titleEl.textContent = next; })
+                    .to(titleEl, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" });
+                } else {
+                  titleEl.textContent = next;
+                }
+              }
+            }
           }
 
           function go(dir) {
